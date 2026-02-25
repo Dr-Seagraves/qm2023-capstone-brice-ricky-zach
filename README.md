@@ -7,6 +7,7 @@ Semester-long capstone for Statistics II: Data Analytics.
 ## Project Structure
 
 - **code/** — Python scripts and notebooks. Use `config_paths.py` for paths.
+- **data/OpenData_rows.csv** - OpenData
 - **data/raw/** — Original data (read-only)
 - **data/processed/** — Intermediate cleaning outputs
 - **data/final/** — M1 output: analysis-ready panel
