@@ -16,3 +16,26 @@ Semester-long capstone for Statistics II: Data Analytics.
 - **tests/** — Autograding test suite
 
 Run `python code/config_paths.py` to verify paths.
+
+
+Research Question: How do repeated natural disasters affect local housing price growth and volatility in
+high-risk counties?
+Datasets:
+Dataset Source What It Provides
+SHELDUS Open Dataset Catalog (OpenData_rows.csv, id
+41; SHELDUS)
+County-level disaster events, damages,
+and fatalities
+Shiller
+Data
+Open Dataset Catalog (OpenData_rows.csv, id
+56; Shiller Data) Historical U.S. home price indices
+FRED Openly available (FRED) via pandas-datareader
+API Mortgage rates and local macro controls
+Key Variables:
+Outcome: County/metro home price growth and volatility
+Driver: Disaster intensity (event count or loss amount)
+Controls: Mortgage rates, unemployment, lagged home price trend
+Groups: High-disaster vs. low-disaster regions
+Why It's Interesting: Climate-related disasters are becoming more frequent and costly. This project tests
+whether repeated disaster exposure creates persistent housing market discounts
