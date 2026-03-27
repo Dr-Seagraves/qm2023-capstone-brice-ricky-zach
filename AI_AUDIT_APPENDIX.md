@@ -94,3 +94,60 @@ All AI interactions occurred within VS Code using the GitHub Copilot Chat interf
 - **Data dictionary descriptions:** AI-generated variable descriptions were reviewed for accuracy but some nuances (e.g., exactly which BLS CPI series Shiller uses) were not independently verified against Shiller's technical appendix.
 - **Ethical considerations section:** The data loss items identified (zone-type records, pre-1996 underreporting, zero-event counties) are plausible and well-reasoned but represent AI-generated analysis, not a systematic audit. A formal assessment of county coverage relative to Census FIPS would strengthen this section.
 - **Zero-event county gap:** The panel only contains counties with at least one recorded event. The AI correctly flagged this as a selection bias issue, but the merge script does not attempt to fill in zero-event county-years from a Census county list. This should be addressed in M2 if cross-sectional comparison to quiet counties is needed.
+
+---
+
+# AI Audit Appendix — M2 EDA Dashboard Addendum
+
+**Milestone:** M2 Exploratory Data Analysis Dashboard  
+**Date:** March 27, 2026  
+**Tooling:** GitHub Copilot Chat (GPT-5.3-Codex) in VS Code
+
+## Disclose — What AI Was Asked to Do
+
+### 1. Build complete M2 EDA deliverables
+**Prompt context:** Team requested implementation of all M2 requirements including notebook visuals, summary report, and required output files.
+
+**AI contribution:**
+- Created `results/reports/capstone_eda.ipynb` with 8 publication-style plots and captions.
+- Saved all figures to `results/figures/` as `M2_plot*.png`.
+- Created `results/reports/M2_EDA_summary.md` with key findings, M3 hypotheses, and data-quality mitigation plan.
+
+### 2. Implement conditional group sensitivity analysis
+**Prompt context:** Assignment requires Plot 6 when natural groups exist and alternatives otherwise.
+
+**AI contribution:**
+- Constructed region groups from county state FIPS.
+- Computed `group_sensitivity = corr(yoy_real, mortgage_rate_30yr)` by region.
+- Produced horizontal bar chart with sensitivity threshold coloring (`r < -0.3` flagged as sensitive).
+- Listed sensitive groups to motivate group x driver interaction terms in M3.
+
+### 3. Add required factor/control scatter plots and decomposition
+**Prompt context:** Plot 7 and Plot 8 are required.
+
+**AI contribution:**
+- Implemented `sns.regplot()` scatter + regression line panels for `yoy_real` vs `unemployment_rate` and `treasury_10yr`.
+- Implemented time-series decomposition of annual mean `yoy_real` using `seasonal_decompose` and saved a 4-panel output (observed/trend/cyclical/residual).
+
+### 4. Address prior milestone feedback (config paths)
+**Prompt context:** Instructor noted `config_paths.py` bug from M1.
+
+**AI contribution:**
+- Refactored root-detection logic in `code/config_paths.py` to rely on project-structure checks.
+- Removed import-time print side effects to avoid noisy/non-deterministic behavior during script imports.
+
+## Verify — How AI Output Was Checked
+
+| AI Output | Verification Method | Result |
+|---|---|---|
+| Notebook execution | Ran `jupyter nbconvert --to notebook --execute --inplace results/reports/capstone_eda.ipynb` | Passed with no execution errors |
+| Figure generation | Checked `results/figures/` for all M2 outputs | 8/8 required plot PNGs present |
+| Numeric findings | Recomputed key correlations and lag statistics in a separate Python check | Values consistent with notebook interpretations |
+| Group sensitivity flags | Verified regional correlations against threshold rule `r < -0.3` | Sensitive groups correctly identified |
+
+## Critique — Limitations of AI-Generated Work
+
+- **Group-definition approximation:** Regional grouping uses state-FIPS-to-Census-region mapping, which is valid but coarse. Finer subgrouping (coastal vs inland, hazard-specific exposure) may reveal additional heterogeneity.
+- **Decomposition on annual data:** Seasonal decomposition is used to satisfy assignment structure, but annual frequency does not support literal within-year seasonality. The periodic component should be interpreted as medium-run cyclicality.
+- **Panel structure constraints:** National macro controls vary by year, not county, so cross-sectional identification for macro factors relies on county fixed effects and interaction structure in M3.
+- **Potential omitted county-year zeros:** Without an explicit full county-year backbone, event-derived sampling may still underweight quiet counties; this should be addressed in M3 robustness checks.

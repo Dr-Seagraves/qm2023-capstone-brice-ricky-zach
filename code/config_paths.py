@@ -20,6 +20,13 @@ import sys
 # PROJECT ROOT DETECTION
 # ==============================================================================
 
+def _is_project_root(path: Path) -> bool:
+    """Return True when the path looks like the capstone project root."""
+    required_dirs = ['code', 'data', 'results']
+    required_files = ['README.md']
+    return all((path / d).is_dir() for d in required_dirs) and all((path / f).exists() for f in required_files)
+
+
 def find_project_root():
     """
     Find project root by looking for key indicators.
@@ -27,16 +34,11 @@ def find_project_root():
     """
     current = Path(__file__).resolve().parent
 
-    # Check current directory first
-    for indicator in ['README.md', 'requirements.txt', '.git']:
-        if (current / indicator).exists():
-            return current
-
-    # Search up to 3 parent levels
-    for parent in current.parents[:3]:
-        for indicator in ['README.md', 'requirements.txt', '.git']:
-            if (parent / indicator).exists():
-                return parent
+    # Search upward from code/ to find a directory with expected project structure.
+    search_candidates = [current] + list(current.parents[:5])
+    for candidate in search_candidates:
+        if _is_project_root(candidate):
+            return candidate
 
     # Fallback: assume parent of code/ is project root (when config_paths lives in code/)
     return current.parent
@@ -66,7 +68,7 @@ REPORTS_DIR = RESULTS_DIR / 'reports'
 # DIRECTORY CREATION
 # ==============================================================================
 
-def ensure_directories():
+def ensure_directories(verbose=False):
     """Create all necessary directories if they don't exist."""
     directories = [
         CODE_DIR,
@@ -81,7 +83,8 @@ def ensure_directories():
     for directory in directories:
         directory.mkdir(parents=True, exist_ok=True)
 
-    print(f"\u2713 Project structure verified at: {PROJECT_ROOT}")
+    if verbose:
+        print(f"Project structure verified at: {PROJECT_ROOT}")
 
 # Auto-create directories on import
 ensure_directories()
