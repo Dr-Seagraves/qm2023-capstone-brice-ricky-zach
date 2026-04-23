@@ -151,3 +151,81 @@ All AI interactions occurred within VS Code using the GitHub Copilot Chat interf
 - **Decomposition on annual data:** Seasonal decomposition is used to satisfy assignment structure, but annual frequency does not support literal within-year seasonality. The periodic component should be interpreted as medium-run cyclicality.
 - **Panel structure constraints:** National macro controls vary by year, not county, so cross-sectional identification for macro factors relies on county fixed effects and interaction structure in M3.
 - **Potential omitted county-year zeros:** Without an explicit full county-year backbone, event-derived sampling may still underweight quiet counties; this should be addressed in M3 robustness checks.
+
+---
+
+# AI Audit Appendix — M3 Econometric Models Addendum
+
+**Milestone:** M3 Econometric Models  
+**Date:** April 23, 2026  
+**Tooling:** GitHub Copilot Chat (GPT-5.3-Codex) in VS Code
+
+## Disclose — What AI Was Asked to Do
+
+### 1. Build full M3 script and outputs
+**Prompt context:** Team requested implementation aligned with assignment requirements for Model A diagnostics/robustness and Model B pathway.
+
+**AI contribution:**
+- Created `capstone_models.py` from scratch.
+- Implemented Model A fixed-effects panel workflow with:
+	- entity FE and time FE
+	- standard and clustered SE variants
+	- publication-style regression table export
+- Implemented required diagnostics:
+	- Breusch-Pagan heteroskedasticity test
+	- VIF table
+	- residuals-vs-fitted and Q-Q plots
+- Implemented at least 3 robustness checks:
+	- standard vs clustered SE comparison
+	- alternative lag structures (lags 1, 2, 3)
+	- outlier-period exclusion (2008-2009 and 2020)
+- Implemented Model B options:
+	- Option 2 ARIMA (`auto_arima` + statsmodels ARIMA 12-step forecast with 95% CI)
+	- Option 3 ML comparison (OLS vs Random Forest with train/test split)
+
+### 2. Handle model identification limitations transparently
+**Prompt context:** The panel uses county variation in disasters but a national housing outcome repeated by county-year.
+
+**AI contribution:**
+- Kept assignment-compliant FE specification while documenting the absorbed-variable issue and weak identification implications in interpretation memo.
+- Preserved results and caveats instead of forcing unsupported claims.
+
+### 3. Produce narrative deliverables
+**AI contribution:**
+- Created `M3_interpretation.md` with all required sections:
+	- Model A headline in units and p-values
+	- economic mechanisms
+	- Model B summary
+	- diagnostics and robustness interpretation
+	- caveats and validity limits
+
+## Verify — How AI Output Was Checked
+
+| AI Output | Verification Method | Result |
+|---|---|---|
+| `capstone_models.py` execution | Ran script end-to-end in project virtual environment | Passed; tables/figures generated |
+| Required diagnostics | Confirmed output files and values in `M3_diagnostic_breusch_pagan.csv`, `M3_diagnostic_vif.csv`, and diagnostic PNGs | Present and interpretable |
+| Robustness checks | Verified CSV outputs for SE comparison, lag alternatives, and outlier exclusion | 3 checks completed |
+| ARIMA requirement | Verified `auto_arima` selected order, ADF test output, 12-step forecast with confidence intervals | Complete |
+| Forecast baseline comparison | Verified ARIMA vs naive RMSE table (`M3_arima_accuracy_vs_naive.csv`) | ARIMA RMSE lower than naive |
+| ML requirement | Verified OLS and RF test metrics (`M3_ml_model_comparison.csv`) and RF importances | Complete |
+
+## Critique — Limitations and Corrections
+
+1. **Data-design limitation (important):** Model A uses a national housing growth outcome replicated over counties. With year FE, macro controls are absorbed and coefficient identification becomes weak. AI output was accepted only after this limitation was explicitly documented.
+2. **Interpretation guardrail:** AI-generated coefficient statements were checked for unit consistency (percentage-point interpretation, not percent-on-percent language).
+3. **Inference caveat:** Heteroskedasticity was significant under Breusch-Pagan, so clustered SE became the primary inference specification.
+4. **Model B realism:** AI suggested both ARIMA and ML to maximize rubric alignment; this exceeds minimum requirement but was retained as it improves defensibility.
+
+## Specific AI Verification Example (Required by policy)
+
+- **Potentially problematic AI phrasing to avoid:** "A 1% increase in driver causes X% change in outcome."  
+- **Verified corrected phrasing used in M3 memo:** "A 1-unit increase in lagged log disaster damage is associated with approximately 0.0000 percentage-point change in `yoy_real` (p = 0.789)."
+
+## Files Generated/Updated for M3
+
+- `capstone_models.py`
+- `M3_interpretation.md`
+- `AI_AUDIT_APPENDIX.md` (this addendum)
+- `results/tables/M3_*.csv`
+- `results/figures/M3_*.png`

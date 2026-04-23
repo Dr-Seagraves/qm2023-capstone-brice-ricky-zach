@@ -1,0 +1,12 @@
+output_type,name
+table,alt_lags
+table,robustness_summary
+table,regression_table
+table,breusch_pagan
+table,vif
+table,adf
+table,arima_accuracy
+table,arima_forecast
+table,ml_comparison
+table,rf_importance
+table,ols_coef

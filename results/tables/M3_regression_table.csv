@@ -1,0 +1,10 @@
+Variable,Model_1_FE_StandardSE,Model_2_FE_ClusteredSE,Model_3_FE_ClusteredSE_NoCrisis
+event_count_l1,0.0000,0.0000,0.0000
+(SE),(0.0000),(0.0000),(0.0000)
+log_total_damage_l1,0.0000,0.0000,-0.0000
+(SE),(0.0000),(0.0000),(0.0000)
+N,112790,112790,103824
+R2_within,0.0000,0.0000,0.0000
+Entity_FE,Yes,Yes,Yes
+Time_FE,Yes,Yes,Yes
+Clustered_SE,No,Yes,Yes
